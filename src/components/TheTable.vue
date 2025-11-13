@@ -1,35 +1,40 @@
-<script setup lang="ts">
+<script setup>
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
+
+defineProps(['posts'])
 </script>
 
 <template>
   <Table>
-    <TableCaption>A list of your recent invoices.</TableCaption>
-    <TableHeader>
+    <TableHeader class="sticky top-0 bg-[white]">
       <TableRow>
-        <TableHead class="w-[100px]"> Invoice </TableHead>
-        <TableHead>Status</TableHead>
-        <TableHead>Method</TableHead>
-        <TableHead class="text-right"> Amount </TableHead>
+        <TableHead>ID</TableHead>
+        <TableHead>Заголовок</TableHead>
+        <TableHead>Автор</TableHead>
+        <TableHead>Контент</TableHead>
       </TableRow>
     </TableHeader>
     <TableBody>
-      <TableRow>
-        <TableCell class="font-medium"> INV001 </TableCell>
+      <TableRow v-for="post in posts" :key="post?.id">
         <TableCell>
-          <Button variant="outline">Button</Button>
+          {{ post?.id }}
         </TableCell>
-        <TableCell>Credit Card</TableCell>
-        <TableCell class="text-right"> $250.00 </TableCell>
+        <TableCell>
+          {{ post?.title }}
+        </TableCell>
+        <TableCell>
+          {{ post?.userId }}
+        </TableCell>
+        <TableCell>
+          {{ post?.body }}
+        </TableCell>
       </TableRow>
     </TableBody>
   </Table>
