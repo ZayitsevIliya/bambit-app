@@ -17,6 +17,6 @@ function search() {
 <template>
   <form class="flex justify-around p-1">
     <Input class="w-[70%]" v-model="inputFilter"></Input>
-    <Button :disabled="loader" @click.prevent="search">Search</Button>
+    <Button :disabled="loader" @click.prevent="search">Поиск</Button>
   </form>
 </template>
