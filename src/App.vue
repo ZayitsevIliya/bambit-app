@@ -1,24 +1,25 @@
 <script setup>
 import TheHeader from '@/components/TheHeader.vue'
-import TheTable from '@/components/TheTable.vue'
+import ModalUser from '@/components/ModalUser.vue'
+import TheTable from '@/components/TheTable/TheTable.vue'
 import Spinner from '@/components/ui/spinner/Spinner.vue'
 import { Button } from './components/ui/button'
 
-import { onBeforeMount, onBeforeUnmount, onMounted } from 'vue'
+import { onBeforeMount } from 'vue'
 import { usePostStore } from './stores/postsStore'
 import { usePost } from './composables/usePosts'
-import { useStorage } from './composables/useStorage'
+import { useUsers } from './composables/useUsers'
+import { useUsersStore } from './stores/usersStore'
 
 const postStore = usePostStore()
+const usersStore = useUsersStore()
 
+const { getUsers } = useUsers()
 const { getAllPosts, findPosts } = usePost()
-const { getCacheToLS, setCacheToLS } = useStorage()
 
-onBeforeMount(() => getCacheToLS())
-onBeforeUnmount(() => setCacheToLS())
-
-onMounted(() => {
-  getAllPosts()
+onBeforeMount(async () => {
+  await getUsers()
+  await getAllPosts()
 })
 
 function checking() {
@@ -46,4 +47,5 @@ function checking() {
       <TheTable v-else :posts="postStore.posts" />
     </div>
   </div>
+  <ModalUser v-if="usersStore.showUserCard" :user="usersStore.currentUser" />
 </template>

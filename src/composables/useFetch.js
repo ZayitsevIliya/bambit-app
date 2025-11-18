@@ -1,28 +1,25 @@
 import { usePostStore } from '@/stores/postsStore'
+import { ref, shallowRef } from 'vue'
 
 export function useFetch() {
   const postStore = usePostStore()
+  const data = shallowRef([])
+  const errors = ref(null)
 
   const controller = new AbortController()
 
-  const getPosts = async (URL, filterWord = '') => {
+  const getData = async (URL, filterWord = '') => {
     try {
       postStore.isLoading = true
-
       const response = await fetch(URL + filterWord, { signal: controller.signal })
-      postStore.posts = await response.json()
+      data.value = await response.json()
     } catch (err) {
-      postStore.errors = err
-      console.log(postStore.errors)
+      console.log(err)
+      errors.value = err
     } finally {
       postStore.isLoading = false
     }
   }
 
-  const abortFetch = () => {
-    controller.abort()
-    console.log('Сервер не отвечает')
-  }
-
-  return { getPosts, abortFetch }
+  return { data, errors, getData }
 }
