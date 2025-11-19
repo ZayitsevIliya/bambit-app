@@ -1,16 +1,18 @@
-import { URL_USERS } from '@/constants'
-import { useUsersStore } from '@/stores/usersStore'
-import { useFetch } from './useFetch'
+// import { URL_USERS } from '@/data/constants'
+// import { useUsersStore } from '@/stores/users'
+// import { useFetch } from './useFetch'
+// import { useFetchStore } from '@/stores/fetchStore'
 
-export function useUsers() {
-  const usersStore = useUsersStore()
-  const { getData, data, errors } = useFetch()
+// export function useUsers() {
+//   const usersStore = useUsersStore()
+//   const fetchStore = useFetchStore()
+//   const { getData, data } = useFetch()
 
-  const getUsers = async function () {
-    await getData(URL_USERS)
-    if (!errors.value) {
-      usersStore.users = data.value
-    }
-  }
-  return { getUsers }
-}
+//   const getUsers = async function () {
+//     await getData(URL_USERS)
+//     if (!fetchStore.errors) {
+//       usersStore.users = data.value
+//     }
+//   }
+//   return { getUsers }
+// }

@@ -8,12 +8,24 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-import { useUsersStore } from '@/stores/usersStore'
+import { useUsersStore } from '@/stores/users'
+
+defineProps(['user'])
 
 const usersStore = useUsersStore()
 
 function close() {
   usersStore.currentUser = null
+}
+
+const defaultUser = {
+  name: 'John',
+  username: 'JohnDoe',
+  website: 'google.com',
+  company: 'Microsoft',
+  address: 'New York',
+  email: 'mail@mail.com',
+  phone: '123456789',
 }
 </script>
 
@@ -24,22 +36,27 @@ function close() {
   >
     <Card @click.stop class="w-[min(500px,80%)] p-10">
       <CardHeader>
-        <CardTitle>Leanne Graham</CardTitle>
-        <CardDescription>Bret</CardDescription>
+        <CardTitle>{{ user.name || defaultUser.name }}</CardTitle>
+        <CardDescription>{{ user.username || defaultUser.username }}</CardDescription>
       </CardHeader>
       <CardContent>
         <ul>
           <li>
             <p>
               Website:
-              <a href="http://" target="_blank" rel="noopener noreferrer"> hildegard.org </a>
+              <a href="http://" target="_blank" rel="noopener noreferrer">
+                {{ user.website || defaultUser.website }}
+              </a>
             </p>
           </li>
           <li>
-            <p>Company: Romaguera-Crona</p>
+            <p>Company: {{ user.company?.name || defaultUser.company }}</p>
           </li>
           <li>
-            <p>Address: Contry, City, Street, Suite</p>
+            <p>
+              Address:
+              <!-- {{ `${user.address?.street}, ${user.address.suite}, ${user.address?.city}` }} -->
+            </p>
           </li>
         </ul>
       </CardContent>
@@ -47,11 +64,11 @@ function close() {
         <ul>
           <li>
             Email:
-            <a href="mailto:">Sincere@april.biz </a>
+            <a href="mailto:">{{ user.email || defaultUser.email }}</a>
           </li>
           <li>
             Phone:
-            <a href="tel:+" class=""> 1-770-736-8031 </a>
+            <a href="tel:+" class=""> {{ user.phone || defaultUser.phone }} </a>
           </li>
         </ul>
       </CardFooter>

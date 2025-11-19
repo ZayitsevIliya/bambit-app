@@ -1,8 +1,11 @@
 <script setup>
 import { Table, TableHeader, TableHead, TableBody, TableRow } from '@/components/ui/table'
 import CustomTableRow from './CustomTableRow.vue'
+import { storeToRefs } from 'pinia'
+import { usePostStore } from '@/stores/posts'
 
-defineProps(['posts'])
+const postStore = usePostStore()
+const { posts } = storeToRefs(postStore)
 </script>
 
 <template>
@@ -17,6 +20,7 @@ defineProps(['posts'])
     </TableHeader>
     <TableBody>
       <CustomTableRow v-for="post in posts" :post :key="post?.id" />
+      <slot></slot>
     </TableBody>
   </Table>
 </template>

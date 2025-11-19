@@ -1,5 +1,5 @@
 <script setup>
-import { useUsersStore } from '@/stores/usersStore'
+import { useUsersStore } from '@/stores/users'
 import { TableRow, TableCell } from '../ui/table'
 import { computed } from 'vue'
 
@@ -9,7 +9,7 @@ const props = defineProps(['post'])
 const userEmail = computed(() => usersStore.users?.[props.post?.userId - 1]['email'])
 
 function handleClick() {
-  usersStore.setCurrentUser(props.post?.userId)
+  usersStore.setCurrentUser(props.post?.userId - 1)
 }
 </script>
 
