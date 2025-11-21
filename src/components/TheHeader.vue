@@ -2,14 +2,18 @@
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ref } from 'vue'
+import { usePostStore } from '@/stores/posts'
 
 const emits = defineEmits(['filter'])
+const postsStore = usePostStore()
+
 defineProps(['loader'])
 
 const inputFilter = ref('')
 
 function search() {
-  emits('filter', inputFilter.value)
+  postsStore.tempFilterWord = inputFilter.value
+  emits('filter', { filterword: inputFilter.value, isNewSearch: true })
   inputFilter.value = ''
 }
 </script>

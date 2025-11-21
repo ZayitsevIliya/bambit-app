@@ -1,7 +1,7 @@
 export function useFetch() {
   const controller = new AbortController()
 
-  const getData = async (URL, filterWord, store = null) => {
+  const getData = async (URL, store = null) => {
     const startTime = Date.now()
 
     try {
@@ -10,9 +10,9 @@ export function useFetch() {
         store.errors.value = null
       }
 
-      console.log(`URL: ${URL}, filterWord: ${filterWord}`, 'store:', store.value)
+      console.log(`URL: ${URL}`, 'store:', store.value)
 
-      const response = await fetch(URL + filterWord, { signal: controller.signal })
+      const response = await fetch(URL, { signal: controller.signal })
 
       const endTime = Date.now()
 

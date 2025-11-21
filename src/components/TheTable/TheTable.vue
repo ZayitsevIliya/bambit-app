@@ -19,8 +19,7 @@ const { posts } = storeToRefs(postStore)
       </TableRow>
     </TableHeader>
     <TableBody>
-      <CustomTableRow v-for="post in posts" :post :key="post?.id" />
-      <slot></slot>
+      <CustomTableRow v-for="(post, index) in posts" :index :post :key="index" />
     </TableBody>
   </Table>
 </template>

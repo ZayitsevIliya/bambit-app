@@ -13,6 +13,8 @@ export const usePostStore = defineStore('posts', () => {
   const ALL_POSTS_KEY = ''
   const ELEMENT_ON_PAGE = 30
 
+  const postCache = ref(new Map())
+
   const isPostsListEmpty = computed(() => false)
 
   function generateGetPostsUrl(filterWord = '', startIndex = 0, limit = 100) {
@@ -38,25 +40,31 @@ export const usePostStore = defineStore('posts', () => {
       isNewSearch = false,
     } = options
 
-    if (isNewSearch) {
-      console.log('posts before: ', posts.value)
-
-      posts.value = []
-      console.log('posts after: ', posts.value)
-      currentPage.value = 0
-    }
-
     const { startIndex, limit } = pagenation(page)
 
     const url = generateGetPostsUrl(filterWord, startIndex, limit)
 
-    let data = await getData(url, { isLoading, errors })
+    const cached = ref(postCache.value.get(filterWord) ?? false)
+
+    const isActualCache = cached.value && cached.value.length >= startIndex + limit
+
+    if (isActualCache) {
+      console.log('From cache: ', cached.value)
+      posts.value = cached.value
+      return
+    }
+
+    const data = await getData(url, { isLoading, errors })
 
     console.log('data: ', data)
 
+    if (isNewSearch) {
+      posts.value = []
+    }
+
     if (data && !errors.value) {
       posts.value.push(...data)
-      data = null
+      postCache.value.set(filterWord, posts.value)
     }
   }
 
@@ -66,7 +74,7 @@ export const usePostStore = defineStore('posts', () => {
     currentPage,
     errors,
     isLoading,
-
+    postCache,
     isPostsListEmpty,
     getPosts,
   }

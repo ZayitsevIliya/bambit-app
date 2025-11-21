@@ -5,7 +5,7 @@ import TheTable from '@/components/TheTable/TheTable.vue'
 import Spinner from '@/components/ui/spinner/Spinner.vue'
 import { Button } from '@/components/ui/button'
 
-import { computed, onMounted } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePostStore } from '@/stores/posts'
 import { useUsersStore } from '@/stores/users'
@@ -18,39 +18,51 @@ const { isLoading: isUsersLoading, showUserCard, currentUser } = storeToRefs(use
 
 const isLoading = computed(() => isPostsLoading.value || isUsersLoading.value)
 
+const observer = ref(null)
+
+async function uploadPosts() {
+  currentPage.value++
+  const data = ref(null)
+  data.value = await postStore.getPosts({
+    filterWord: postStore.tempFilterWord,
+    page: currentPage.value,
+  })
+
+  await nextTick()
+
+  observeLastRow()
+}
+
+const observeLastRow = () => {
+  const lastRow = ref(document.querySelector('#lastRow'))
+  if (lastRow.value && observer.value) {
+    observer.value.observe(lastRow.value)
+  }
+}
+
 onMounted(async () => {
   await usersStore.getUsers()
-  await postStore.getPosts(currentPage.value)
+  await postStore.getPosts({ page: currentPage.value })
+
+  observer.value = new IntersectionObserver(([entry]) => {
+    if (entry && entry.isIntersecting) {
+      observer.value.unobserve(entry.target)
+      uploadPosts()
+    }
+  })
+
+  observeLastRow()
 })
 
-function handleScrolling(event) {
-  let value = event.target.scrollTop
-
-  if (currentPage.value < 1 && value > 8500) {
-    currentPage.value = 1
-
-    postStore.getPosts(currentPage.value)
+onUnmounted(() => {
+  if (observer.value) {
+    observer.value.disconnect()
   }
+})
 
-  if (currentPage.value < 2 && value > 18500) {
-    currentPage.value = 2
-
-    postStore.getPosts(currentPage.value)
-  }
-
-  if (currentPage.value < 3 && value > 28000) {
-    currentPage.value = 3
-
-    postStore.getPosts(currentPage.value)
-  }
-}
-function checking() {
-  isPostsLoading.value = true
-
-  setTimeout(() => {
-    isPostsLoading.value = false
-  }, 2000)
-}
+// async function checking() {
+//   console.log(document.querySelectorAll('#lastRow'))
+// }
 </script>
 
 <template>
@@ -59,8 +71,8 @@ function checking() {
     <div
       class="relative flex flex-col gap-4 max-w-[600px] w-full max-h-[600px] h-full rounded-lg overflow-hidden bg-[white] p-1"
     >
-      <TheHeader @filter="postStore.findPosts" :loader="isLoading" />
-      <TheTable @scroll="handleScrolling" />
+      <TheHeader @filter="postStore.getPosts" :loader="isLoading" />
+      <TheTable />
       <div
         v-if="isLoading || isPostsListEmpty"
         class="absolute top-16 w-full h-full flex justify-center items-center bg-[#ffffffd3]"
