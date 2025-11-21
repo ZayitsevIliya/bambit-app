@@ -1,9 +1,10 @@
 <script setup>
 import { useUsersStore } from '@/stores/users'
 import { TableRow, TableCell } from '../ui/table'
-import { computed } from 'vue'
 import { usePostStore } from '@/stores/posts'
 import { storeToRefs } from 'pinia'
+import { computed, onMounted, onUnmounted } from 'vue'
+import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 
 const usersStore = useUsersStore()
 const postStore = usePostStore()
@@ -18,17 +19,29 @@ function handleClick() {
   usersStore.setCurrentUser(props.post?.userId - 1)
 }
 
-const lastEl = computed(() => {
+const postsLength = computed(() => {
   return posts.value.length
 })
 
-const lastRow = computed(() => {
-  return lastEl.value - 1 == props.index ? 'lastRow' : null
+const isLastRow = computed(() => {
+  return postsLength.value - 1 == props.index
 })
+
+if (isLastRow.value) {
+  const { observerInit, observerDisconnect } = useInfiniteScroll()
+
+  onMounted(() => {
+    observerInit()
+  })
+
+  onUnmounted(() => {
+    observerDisconnect()
+  })
+}
 </script>
 
 <template>
-  <TableRow :id="lastRow">
+  <TableRow :id="isLastRow ? 'lastRow' : null">
     <TableCell>{{ post.id }}</TableCell>
     <TableCell>{{ post.title }}</TableCell>
     <TableCell class="text-center">

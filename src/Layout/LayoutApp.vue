@@ -5,7 +5,7 @@ import TheTable from '@/components/TheTable/TheTable.vue'
 import Spinner from '@/components/ui/spinner/Spinner.vue'
 import { Button } from '@/components/ui/button'
 
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePostStore } from '@/stores/posts'
 import { useUsersStore } from '@/stores/users'
@@ -13,56 +13,19 @@ import { useUsersStore } from '@/stores/users'
 const usersStore = useUsersStore()
 const postStore = usePostStore()
 
-const { isLoading: isPostsLoading, isPostsListEmpty, currentPage } = storeToRefs(postStore)
+const { isLoading: isPostsLoading, isPostsListEmpty } = storeToRefs(postStore)
 const { isLoading: isUsersLoading, showUserCard, currentUser } = storeToRefs(usersStore)
 
 const isLoading = computed(() => isPostsLoading.value || isUsersLoading.value)
 
-const observer = ref(null)
-
-async function uploadPosts() {
-  currentPage.value++
-  const data = ref(null)
-  data.value = await postStore.getPosts({
-    filterWord: postStore.tempFilterWord,
-    page: currentPage.value,
-  })
-
-  await nextTick()
-
-  observeLastRow()
-}
-
-const observeLastRow = () => {
-  const lastRow = ref(document.querySelector('#lastRow'))
-  if (lastRow.value && observer.value) {
-    observer.value.observe(lastRow.value)
-  }
-}
-
 onMounted(async () => {
   await usersStore.getUsers()
-  await postStore.getPosts({ page: currentPage.value })
-
-  observer.value = new IntersectionObserver(([entry]) => {
-    if (entry && entry.isIntersecting) {
-      observer.value.unobserve(entry.target)
-      uploadPosts()
-    }
-  })
-
-  observeLastRow()
+  await postStore.getPosts()
 })
 
-onUnmounted(() => {
-  if (observer.value) {
-    observer.value.disconnect()
-  }
-})
-
-// async function checking() {
-//   console.log(document.querySelectorAll('#lastRow'))
-// }
+function checking() {
+  console.log('test button')
+}
 </script>
 
 <template>

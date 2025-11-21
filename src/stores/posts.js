@@ -52,12 +52,16 @@ export const usePostStore = defineStore('posts', () => {
 
     let data = await getData(url, { isLoading, errors })
 
+    const newPosts = data
+
     console.log('data: ', data)
 
     if (data && !errors.value) {
       posts.value.push(...data)
       data = null
     }
+
+    return newPosts
   }
 
   return {
