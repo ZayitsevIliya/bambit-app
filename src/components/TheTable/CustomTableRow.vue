@@ -3,7 +3,7 @@ import { useUsersStore } from '@/stores/users'
 import { TableRow, TableCell } from '../ui/table'
 import { usePostStore } from '@/stores/posts'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, toValue } from 'vue'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 
 const usersStore = useUsersStore()
@@ -13,7 +13,11 @@ const props = defineProps(['post', 'index'])
 
 const { posts } = storeToRefs(postStore)
 
-const userEmail = computed(() => usersStore.users?.[props.post?.userId - 1]['email'])
+const userEmail = computed(() => {
+  return usersStore.getUsersEmail(props.post?.userId - 1)
+})
+
+postStore.posts[props.index].email = toValue(computed(() => userEmail.value))
 
 function handleClick() {
   usersStore.setCurrentUser(props.post?.userId - 1)

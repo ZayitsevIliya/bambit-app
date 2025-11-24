@@ -1,6 +1,6 @@
 <script setup>
 import { Loader2Icon } from 'lucide-vue-next'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/shadcn-utils'
 
 const props = defineProps({
   class: { type: null, required: false },

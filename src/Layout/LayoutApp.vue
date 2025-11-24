@@ -16,16 +16,15 @@ const postStore = usePostStore()
 const { isLoading: isPostsLoading, isPostsListEmpty } = storeToRefs(postStore)
 const { isLoading: isUsersLoading, currentUser } = storeToRefs(usersStore)
 
-const isLoading = computed(() => isPostsLoading.value || isUsersLoading.value)
+const isLoading = computed(() => [isPostsLoading.value, isUsersLoading.value].some(Boolean))
 
 onMounted(async () => {
   await usersStore.getUsers()
   await postStore.getPosts()
 })
 
-function checking() {
-  console.log(postStore.filterWord)
-  console.log(postStore.ALL_POSTS_KEY)
+async function checking() {
+  console.log(isUsersLoading)
 }
 </script>
 

@@ -10,7 +10,7 @@ export function useFetch() {
         store.errors.value = null
       }
 
-      console.log(`URL: ${URL}`, 'store:', store.value)
+      console.log(`URL: ${URL}`, 'store:', store?.value)
 
       const response = await fetch(URL, { signal: controller.signal })
 
@@ -20,7 +20,7 @@ export function useFetch() {
 
       let data = await response.json()
 
-      // console.log('data: ', data)
+      console.log('data: ', data)
 
       console.log(`time: ${endTime - startTime}ms`)
 
@@ -32,7 +32,7 @@ export function useFetch() {
         store.errors.value = err
       }
 
-      // return null
+      return
     } finally {
       if (store) {
         store.isLoading.value = false

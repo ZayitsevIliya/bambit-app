@@ -1,3 +1,4 @@
+import { useFetch } from '@/composables/useFetch'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
 
@@ -12,11 +13,17 @@ export const useUsersStore = defineStore('users', () => {
     return !!currentUser.value
   })
 
+  const { getData } = useFetch()
+
   const getUsers = async function () {
-    const response = await fetch('src/data/users.json')
-    const data = await response.json()
+    const data = await getData('https://jsonplaceholder.typicode.com/users')
 
     users.value = data
+  }
+
+  const getUsersEmail = function (id) {
+    const user = getUserById(id)
+    return user?.email
   }
 
   const getUserById = function (id) {
@@ -40,5 +47,6 @@ export const useUsersStore = defineStore('users', () => {
     unsetCurrentUser,
     showUserCard,
     getUsers,
+    getUsersEmail,
   }
 })

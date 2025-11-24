@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useFetch } from '@/composables/useFetch'
 
 export const usePostStore = defineStore('posts', () => {
@@ -7,12 +7,12 @@ export const usePostStore = defineStore('posts', () => {
   const posts = ref([])
   const errors = ref(null)
   const isLoading = ref(false)
+  const sortKey = ref(null)
+  const isPostsListEmpty = ref(false)
 
   const filterWord = ref('')
 
   const ELEMENT_ON_PAGE = 30
-
-  const isPostsListEmpty = computed(() => false)
 
   function generateGetPostsUrl(filterWord = '', startIndex = 0, limit = 100) {
     return `https://jsonplaceholder.typicode.com/posts?title_like=${filterWord}&_start=${startIndex}&_limit=${limit}`
@@ -28,10 +28,21 @@ export const usePostStore = defineStore('posts', () => {
     }
   }
 
+  function sortColumn(key) {
+    if (key) {
+      sortKey.value = key
+      return posts.value.sort((a, b) => a[key].localeCompare(b[key]))
+    }
+    sortKey.value = null
+    return posts.value.sort((a, b) => a.id - b.id)
+  }
+
   const { getData } = useFetch()
 
   const getPosts = async function (options = {}) {
     const { page = 0, isNewSearch = false } = options
+
+    isPostsListEmpty.value = false
 
     if (isNewSearch) {
       posts.value = []
@@ -40,15 +51,15 @@ export const usePostStore = defineStore('posts', () => {
 
     const { startIndex, limit } = pagenation(page)
 
-    console.log('filter: ', filterWord.value)
-
     const url = generateGetPostsUrl(filterWord.value, startIndex, limit)
 
     let data = await getData(url, { isLoading, errors })
 
-    const newPosts = data
+    if (data.length == 0 && posts.value.length == 0) {
+      isPostsListEmpty.value = true
+    }
 
-    console.log('data: ', data)
+    const newPosts = data
 
     if (data && !errors.value) {
       posts.value.push(...data)
@@ -66,5 +77,6 @@ export const usePostStore = defineStore('posts', () => {
     filterWord,
     isPostsListEmpty,
     getPosts,
+    sortColumn,
   }
 })
