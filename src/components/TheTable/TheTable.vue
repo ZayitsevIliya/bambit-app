@@ -10,7 +10,7 @@ const { posts } = storeToRefs(postStore)
 
 <template>
   <Table>
-    <TableHeader class="sticky top-0 bg-[white]">
+    <TableHeader class="sticky top-0 bg-[white] shadow">
       <TableRow>
         <TableHead class="text-center">ID</TableHead>
         <TableHead class="text-center">Заголовок</TableHead>

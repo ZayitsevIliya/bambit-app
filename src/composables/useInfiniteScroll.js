@@ -3,7 +3,7 @@ import { usePostStore } from '@/stores/posts'
 import { storeToRefs } from 'pinia'
 
 export function useInfiniteScroll() {
-  const { currentPage, tempFilterWord } = storeToRefs(usePostStore())
+  const { currentPage } = storeToRefs(usePostStore())
   const { getPosts } = usePostStore()
 
   const observer = ref(null)
@@ -12,7 +12,6 @@ export function useInfiniteScroll() {
     currentPage.value++
 
     const data = await getPosts({
-      filterWord: tempFilterWord,
       page: currentPage.value,
     })
 

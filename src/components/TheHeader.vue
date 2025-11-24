@@ -12,8 +12,9 @@ defineProps(['loader'])
 const inputFilter = ref('')
 
 function search() {
-  postsStore.tempFilterWord = inputFilter.value
-  emits('filter', { filterword: inputFilter.value, isNewSearch: true })
+  postsStore.filterWord = inputFilter.value
+
+  emits('filter', { isNewSearch: true })
   inputFilter.value = ''
 }
 </script>

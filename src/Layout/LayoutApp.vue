@@ -14,7 +14,7 @@ const usersStore = useUsersStore()
 const postStore = usePostStore()
 
 const { isLoading: isPostsLoading, isPostsListEmpty } = storeToRefs(postStore)
-const { isLoading: isUsersLoading, showUserCard, currentUser } = storeToRefs(usersStore)
+const { isLoading: isUsersLoading, currentUser } = storeToRefs(usersStore)
 
 const isLoading = computed(() => isPostsLoading.value || isUsersLoading.value)
 
@@ -24,7 +24,8 @@ onMounted(async () => {
 })
 
 function checking() {
-  console.log('test button')
+  console.log(postStore.filterWord)
+  console.log(postStore.ALL_POSTS_KEY)
 }
 </script>
 
@@ -47,5 +48,5 @@ function checking() {
       </div>
     </div>
   </div>
-  <ModalUser v-if="showUserCard" :user="currentUser" />
+  <ModalUser :user="currentUser" />
 </template>

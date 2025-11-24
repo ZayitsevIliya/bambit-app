@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
-// import { URL_USERS } from '@/data/constants'
-// import { useFetch } from '@/composables/useFetch'
 
 export const useUsersStore = defineStore('users', () => {
   const users = shallowRef([])
@@ -14,14 +12,7 @@ export const useUsersStore = defineStore('users', () => {
     return !!currentUser.value
   })
 
-  // const { getData } = useFetch()
-
   const getUsers = async function () {
-    // const data = await getData(URL_USERS, '', { isLoading, errors })
-    // if (data && !errors.value) {
-    //   users.value = data
-    // }
-
     const response = await fetch('src/data/users.json')
     const data = await response.json()
 
@@ -36,5 +27,18 @@ export const useUsersStore = defineStore('users', () => {
     currentUser.value = getUserById(id)
   }
 
-  return { users, currentUser, errors, isLoading, setCurrentUser, showUserCard, getUsers }
+  const unsetCurrentUser = function () {
+    currentUser.value = null
+  }
+
+  return {
+    users,
+    currentUser,
+    errors,
+    isLoading,
+    setCurrentUser,
+    unsetCurrentUser,
+    showUserCard,
+    getUsers,
+  }
 })

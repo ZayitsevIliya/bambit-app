@@ -8,9 +8,8 @@ export const usePostStore = defineStore('posts', () => {
   const errors = ref(null)
   const isLoading = ref(false)
 
-  const tempFilterWord = ref('')
+  const filterWord = ref('')
 
-  const ALL_POSTS_KEY = ''
   const ELEMENT_ON_PAGE = 30
 
   const isPostsListEmpty = computed(() => false)
@@ -32,23 +31,18 @@ export const usePostStore = defineStore('posts', () => {
   const { getData } = useFetch()
 
   const getPosts = async function (options = {}) {
-    const {
-      filterWord = ALL_POSTS_KEY || tempFilterWord.value,
-      page = 0,
-      isNewSearch = false,
-    } = options
+    const { page = 0, isNewSearch = false } = options
 
     if (isNewSearch) {
-      console.log('posts before: ', posts.value)
-
       posts.value = []
-      console.log('posts after: ', posts.value)
       currentPage.value = 0
     }
 
     const { startIndex, limit } = pagenation(page)
 
-    const url = generateGetPostsUrl(filterWord, startIndex, limit)
+    console.log('filter: ', filterWord.value)
+
+    const url = generateGetPostsUrl(filterWord.value, startIndex, limit)
 
     let data = await getData(url, { isLoading, errors })
 
@@ -66,11 +60,10 @@ export const usePostStore = defineStore('posts', () => {
 
   return {
     posts,
-    tempFilterWord,
     currentPage,
     errors,
     isLoading,
-
+    filterWord,
     isPostsListEmpty,
     getPosts,
   }
