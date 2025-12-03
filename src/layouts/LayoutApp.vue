@@ -1,9 +1,9 @@
 <script setup>
 import TheHeader from '@/components/TheHeader.vue'
 import ModalUser from '@/components/ModalUser.vue'
-import TheTable from '@/components/TheTable/TheTable.vue'
-import Spinner from '@/components/ui/spinner/Spinner.vue'
 import ToggleMode from '@/components/ToggleMode.vue'
+import Spinner from '@/components/ui/spinner/Spinner.vue'
+import TheTable from '@/components/TheTable/TheTable.vue'
 
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
