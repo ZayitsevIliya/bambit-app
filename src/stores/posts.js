@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useFetch } from '@/composables/useFetch'
+import { useUsers } from '@/composables/useUser'
 
 export const usePostStore = defineStore('posts', () => {
   const currentPage = ref(0)
@@ -12,11 +13,11 @@ export const usePostStore = defineStore('posts', () => {
 
   const filterWord = ref('')
 
-  const ELEMENT_ON_PAGE = 30
-
-  function generateGetPostsUrl(filterWord = '', startIndex = 0, limit = 100) {
-    return `https://jsonplaceholder.typicode.com/posts?title_like=${filterWord}&_start=${startIndex}&_limit=${limit}`
+  function generateGetPostsUrl(searchKey = '', startIndex = 0, limit = 100) {
+    return `https://jsonplaceholder.typicode.com/posts?title_like=${searchKey}&_start=${startIndex}&_limit=${limit}`
   }
+
+  const ELEMENT_ON_PAGE = 30
 
   const pagenation = function (page) {
     const startIndex = page * ELEMENT_ON_PAGE
@@ -28,13 +29,17 @@ export const usePostStore = defineStore('posts', () => {
     }
   }
 
-  function sortColumn(key) {
-    if (key) {
-      sortKey.value = key
-      return posts.value.sort((a, b) => a[key].localeCompare(b[key]))
+  function sortColumn(key, isAscDirection) {
+    sortKey.value = key
+    if (key == 'id') {
+      return isAscDirection
+        ? posts.value.sort((a, b) => a.id - b.id)
+        : posts.value.sort((a, b) => b.id - a.id)
     }
-    sortKey.value = null
-    return posts.value.sort((a, b) => a.id - b.id)
+
+    return isAscDirection
+      ? posts.value.sort((a, b) => a[key].localeCompare(b[key]))
+      : posts.value.sort((a, b) => b[key].localeCompare(a[key]))
   }
 
   const { getData } = useFetch()
@@ -59,6 +64,16 @@ export const usePostStore = defineStore('posts', () => {
       isPostsListEmpty.value = true
     }
 
+    const userIdCache = new Map()
+
+    data.forEach((post) => {
+      if (!userIdCache.has(post.userId)) {
+        useUsers(post.userId)
+        userIdCache.set(post.userId, true)
+        return
+      }
+    })
+
     const newPosts = data
 
     if (data && !errors.value) {
@@ -72,6 +87,7 @@ export const usePostStore = defineStore('posts', () => {
   return {
     posts,
     currentPage,
+    sortKey,
     errors,
     isLoading,
     filterWord,

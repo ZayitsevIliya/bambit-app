@@ -1,5 +1,5 @@
 <script setup>
-import LayoutApp from './Layout/LayoutApp.vue'
+import LayoutApp from '@/layouts/LayoutApp.vue'
 </script>
 
 <template>

@@ -3,9 +3,9 @@ import TheHeader from '@/components/TheHeader.vue'
 import ModalUser from '@/components/ModalUser.vue'
 import TheTable from '@/components/TheTable/TheTable.vue'
 import Spinner from '@/components/ui/spinner/Spinner.vue'
-import { Button } from '@/components/ui/button'
+import ToggleMode from '@/components/ToggleMode.vue'
 
-import { computed, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePostStore } from '@/stores/posts'
 import { useUsersStore } from '@/stores/users'
@@ -13,32 +13,25 @@ import { useUsersStore } from '@/stores/users'
 const usersStore = useUsersStore()
 const postStore = usePostStore()
 
-const { isLoading: isPostsLoading, isPostsListEmpty } = storeToRefs(postStore)
-const { isLoading: isUsersLoading, currentUser } = storeToRefs(usersStore)
-
-const isLoading = computed(() => [isPostsLoading.value, isUsersLoading.value].some(Boolean))
+const { isLoading, isPostsListEmpty } = storeToRefs(postStore)
+const { currentUser } = storeToRefs(usersStore)
 
 onMounted(async () => {
-  await usersStore.getUsers()
   await postStore.getPosts()
 })
-
-async function checking() {
-  console.log(isUsersLoading)
-}
 </script>
 
 <template>
-  <Button @click="checking" class="absolute top-4 left-4">Check button</Button>
-  <div class="w-full h-screen flex justify-center items-center bg-blue-100">
+  <ToggleMode />
+  <div class="w-full h-screen flex justify-center items-center">
     <div
-      class="relative flex flex-col gap-4 max-w-[600px] w-full max-h-[600px] h-full rounded-lg overflow-hidden bg-[white] p-1"
+      class="relative flex flex-col gap-4 max-w-[600px] w-full max-h-[600px] h-full overflow-hidden rounded-lg bg-card p-1"
     >
       <TheHeader @filter="postStore.getPosts" :loader="isLoading" />
       <TheTable />
       <div
         v-if="isLoading || isPostsListEmpty"
-        class="absolute top-16 w-full h-full flex justify-center items-center bg-[#ffffffd3]"
+        class="absolute top-16 w-full h-full flex justify-center items-center bg-muted"
       >
         <Spinner v-if="isLoading" />
         <div v-else>

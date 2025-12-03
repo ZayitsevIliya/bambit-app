@@ -18,10 +18,6 @@ export function useInfiniteScroll() {
     if (data.length == 0) {
       return
     }
-
-    await nextTick()
-
-    observeLastRow()
   }
 
   const observeLastRow = function () {
@@ -36,6 +32,7 @@ export function useInfiniteScroll() {
     observer.value = new IntersectionObserver(async ([entry]) => {
       if (entry && entry.isIntersecting) {
         await observer.value.unobserve(entry.target)
+        await nextTick()
         await uploadPosts()
       }
     })
