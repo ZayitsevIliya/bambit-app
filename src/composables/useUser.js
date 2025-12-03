@@ -12,6 +12,13 @@ export function useUsers(userId) {
 
     if (usersStore.usersMap[userId]) {
       user.value = usersStore.usersMap[userId]
+
+      postsStore.posts.forEach((post) => {
+        if (post.userId == userId) {
+          post.email = user.value.email
+        }
+      })
+
       return
     }
 
@@ -19,15 +26,15 @@ export function useUsers(userId) {
       const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
       user.value = await response.json()
       usersStore.usersMap[userId] = user.value
+
+      postsStore.posts.forEach((post) => {
+        if (post.userId == userId) {
+          post.email = user.value.email
+        }
+      })
     } catch (err) {
       console.log(err)
     }
-
-    postsStore.posts.forEach((post) => {
-      if (post.userId == userId) {
-        post.email = user.value.email
-      }
-    })
   }
 
   loadUserById()

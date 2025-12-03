@@ -4,6 +4,7 @@ import ModalUser from '@/components/ModalUser.vue'
 import ToggleMode from '@/components/ToggleMode.vue'
 import Spinner from '@/components/ui/spinner/Spinner.vue'
 import TheTable from '@/components/TheTable/TheTable.vue'
+import Button from '@/components/ui/button/Button.vue'
 
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
@@ -19,9 +20,14 @@ const { currentUser } = storeToRefs(usersStore)
 onMounted(async () => {
   await postStore.getPosts()
 })
+
+function checkingButton() {
+  console.log(usersStore.usersMap)
+}
 </script>
 
 <template>
+  <Button @click="checkingButton" class="absolute top-20 left-5">Check</Button>
   <ToggleMode />
   <div class="w-full h-screen flex justify-center items-center">
     <div

@@ -64,20 +64,23 @@ export const usePostStore = defineStore('posts', () => {
       isPostsListEmpty.value = true
     }
 
-    const userIdCache = new Map()
-
-    data.forEach((post) => {
-      if (!userIdCache.has(post.userId)) {
-        useUsers(post.userId)
-        userIdCache.set(post.userId, true)
-        return
-      }
-    })
-
     const newPosts = data
 
     if (data && !errors.value) {
       posts.value.push(...data)
+
+      const userIdCache = new Map()
+
+      data.forEach((post) => {
+        if (!userIdCache.has(post.userId)) {
+          useUsers(post.userId)
+          userIdCache.set(post.userId, true)
+          return
+        }
+      })
+
+      userIdCache.clear()
+
       data = null
     }
 
